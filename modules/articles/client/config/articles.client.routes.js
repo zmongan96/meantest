@@ -18,7 +18,10 @@
         url: '',
         templateUrl: '/modules/articles/client/views/list-articles.client.view.html',
         controller: 'ArticlesListController',
-        controllerAs: 'vm'
+        controllerAs: 'vm',
+        data: {
+          roles: ['user', 'admin']
+        }
       })
       .state('articles.view', {
         url: '/:articleId',
@@ -29,7 +32,8 @@
           articleResolve: getArticle
         },
         data: {
-          pageTitle: '{{ articleResolve.title }}'
+          pageTitle: '{{ articleResolve.title }}',
+          roles: ['user', 'admin']
         }
       });
   }
