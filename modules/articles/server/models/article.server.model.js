@@ -10,41 +10,64 @@ var mongoose = require('mongoose'),
   chalk = require('chalk');
 
 /**
- * Article Schema
+ * Listing Schema
  */
-var ArticleSchema = new Schema({
-  created: {
-    type: Date,
-    default: Date.now
-  },
+var listingSchema = new Schema({
   title: {
     type: String,
-    default: '',
-    trim: true,
-    required: 'Title cannot be blank'
+    required: true,
+    unique: true
   },
-  content: {
+  name: {
     type: String,
-    default: '',
-    trim: true
+    required: true
+  },
+  batch: {
+    type: String,
+    required: true
+  },
+  testDate: {
+    type: String,
+    required: true
+  },
+  url: {
+    type: String,
+    required: true
+  },
+  company: {
+    type: String,
+    required: true
+  },
+  companyURL: {
+    type: String,
+    required: true
   },
   user: {
     type: Schema.ObjectId,
     ref: 'User'
-  }
+  },
+  created_at: Date,
+  updated_at: Date
 });
 
-ArticleSchema.statics.seed = seed;
+listingSchema.pre('save', function (next) {
+  var currentTime = new Date;
+  this.updated_at = currentTime;
+  if (!this.created_at) {
+    this.created_at = currentTime;
+  }
+  next();
+});
 
-mongoose.model('Article', ArticleSchema);
+listingSchema.statics.seed = seed;
+
+var Listing = mongoose.model('Listing', listingSchema);
 
 /**
 * Seeds the User collection with document (Article)
 * and provided options.
 */
 function seed(doc, options) {
-  var Article = mongoose.model('Article');
-
   return new Promise(function (resolve, reject) {
 
     skipDocument()
@@ -83,7 +106,7 @@ function seed(doc, options) {
 
     function skipDocument() {
       return new Promise(function (resolve, reject) {
-        Article
+        Listing
           .findOne({
             title: doc.title
           })
@@ -117,22 +140,24 @@ function seed(doc, options) {
       return new Promise(function (resolve, reject) {
         if (skip) {
           return resolve({
-            message: chalk.yellow('Database Seeding: Article\t' + doc.title + ' skipped')
+            message: chalk.yellow('Database Seeding: Listing\t' + doc.title + ' skipped')
           });
         }
 
-        var article = new Article(doc);
+        var listing = new Listing(doc);
 
-        article.save(function (err) {
+        listing.save(function (err) {
           if (err) {
             return reject(err);
           }
 
           return resolve({
-            message: 'Database Seeding: Article\t' + article.title + ' added'
+            message: 'Database Seeding: Listing\t' + listing.title + ' added'
           });
         });
       });
     }
   });
 }
+
+module.exports = Listing;
