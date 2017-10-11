@@ -13,10 +13,10 @@
         url: '/chat',
         templateUrl: '/modules/chat/client/views/chat.client.view.html',
         controller: 'ChatController',
-        controllerAs: 'vm',
-        data: {
+        controllerAs: 'vm'
+        /* data: {
           roles: ['user', 'admin']
-        }
+        } */
       });
   }
 }());
